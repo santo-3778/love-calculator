@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>FLAMES</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+        integrity="sha512-jPdxxq5glwRov5eXtUKuhVOFJoHhsbLap3o29hxIB1kevjTMXSMYJpSb+PC9k2A6DqqlbUmxqBX0K7uKubPSTg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+        }
+
+        .container {
+            width: 100%;
+            min-height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            /* Add this */
+        }
+
+        .bg-container {
+            width: 100%;
+            min-height: 100%;
+            --s: 150px;
+            /* control the size */
+            --c1: #ffffff;
+            --c2: #E41B17;
+
+            --_g: var(--c1) 0% 5%, var(--c2) 6% 15%, var(--c1) 16% 25%, var(--c2) 26% 35%,
+                var(--c1) 36% 45%, var(--c2) 46% 55%, var(--c1) 56% 65%, var(--c2) 66% 75%,
+                var(--c1) 76% 85%, var(--c2) 86% 95%, #0000 96%;
+            background: radial-gradient(50% 50% at 100% 0, var(--_g)),
+                radial-gradient(50% 50% at 0 100%, var(--_g)),
+                radial-gradient(50% 50%, var(--_g)),
+                radial-gradient(50% 50%, var(--_g)) calc(var(--s) / 2) calc(var(--s) / 2) var(--c1);
+            background-size: var(--s) var(--s);
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+
+        .container-content {
+            width: 80%;
+            /* Adjust the width as needed */
+            text-align: center;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #ffffff;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        h2 {
+            color: #E41B17;
+            font-size: 36px;
+            margin-bottom: 20px;
+            font-family: 'Storybook Calligraphy Script', cursive;
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 5px;
+            display: block;
+            font-weight: bold;
+            font-family: 'Arial', sans-serif;
+            text-align: left;
+        }
+
+        input[type=text],
+        input[type=button] {
+            width: 100%;
+            padding: 12px 20px;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        input[type=button] {
+            background-color: #E41B17;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        input[type=button]:hover {
+            background-color: #c0392b;
+        }
+
+        .result-container {
+            margin-top: 20px;
+            position: relative;
+        }
+
+        .result {
+            font-size: 24px;
+            font-weight: bold;
+            margin-top: 20px;
+            color: #E41B17;
+        }
+
+        .heartbeatloader {
+            display: none;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 999;
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+
+        .spinner {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .svgdraw {
+            width: 100px;
+            height: 100px;
+        }
+
+        .path {
+            stroke: rgba(0, 0, 0, 0.95);
+            stroke-width: 4;
+            stroke-dasharray: 1000px;
+            stroke-dashoffset: 1000px;
+            animation: draw 1.5s infinite forwards normal linear;
+            animation-delay: 0.1s;
+            position: relative;
+        }
+
+        @keyframes draw {
+            to {
+                stroke-dashoffset: 0;
+            }
+        }
+
+        .innercircle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(1.2);
+            width: 160%;
+            height: auto;
+            z-index: 1;
+            opacity: 0.97;
+            animation: innerbeat 1.5s infinite linear forwards;
+        }
+
+        .innercircle:before,
+        .innercircle:after {
+            position: absolute;
+            content: "";
+            left: 25%;
+            top: 0;
+            width: 25%;
+            height: auto;
+            padding-bottom: 40%;
+            background: #E41B17;
+            border-radius: 50px 50px 0 0;
+            transform: rotate(-45deg);
+            transform-origin: 0 100%;
+        }
+
+        .innercircle:after {
+            left: 0;
+            transform: rotate(45deg);
+            transform-origin: 100% 100%;
+        }
+
+        @keyframes innerbeat {
+            0% {
+                transform: translate(-50%, -50%) scale(1.2);
+            }
+
+            10% {
+                transform: translate(-50%, -50%) scale(1.2);
+            }
+
+            50% {
+                transform: translate(-50%, -50%) scale(1.3);
+            }
+
+            60% {
+                transform: translate(-50%, -50%) scale(1.25);
+            }
+
+            75% {
+                transform: translate(-50%, -50%) scale(1.3);
+            }
+        }
+
+        .outercircle {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background-color: rgba(231, 76, 60, 0.774);
+            box-shadow: 0 0 30px 0px rgba(0, 0, 0, 0.1);
+            position: absolute;
+            z-index: -1;
+            opacity: 0.7;
+            top: 0;
+            left: 0;
+            transform: scale(1.2);
+            animation: outerbeat 1.5s infinite linear forwards;
+        }
+
+        @keyframes outerbeat {
+            0% {
+                transform: scale(1.2);
+            }
+
+            10% {
+                transform: scale(1.2);
+            }
+
+            50% {
+                transform: scale(1.3);
+            }
+
+            60% {
+                transform: scale(1.25);
+            }
+
+            75% {
+                transform: scale(1.3);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container-content {
+                width: 90%;
+                margin-top: 50px;
+                /* Adjust this value as needed */
+            }
+
+
+
+            .footer {
+                position: fixed;
+                bottom: 0;
+                width: 100%;
+                background-color: #f8f9fa;
+                padding: 20px 0;
+                text-align: center;
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="bg-container"></div>
+    <div class="container">
+        <div class="container-content">
+            <h2>Love Calculator</h2>
+            <form id="loveCalculatorForm">
+                <div class="row">
+                    <div class="col-md-6 form-group">
+                        <label for="name1">Your Name:</label>
+                        <input type="text" class="form-control" id="name1" name="name1" placeholder="Enter full name"
+                            pattern="[a-zA-Z\s]+" title="Only letters and spaces are allowed" required>
+                    </div>
+                    <div class="col-md-6 form-group">
+                        <label for="name2">Your Partner's Name:</label>
+                        <input type="text" class="form-control" id="name2" name="name2" placeholder="Enter full name"
+                            pattern="[a-zA-Z\s]+" title="Only letters and spaces are allowed" required>
+                    </div>
+                </div>
+                <input type="button" class="btn " id="calculateButton" value="Calculate">
+            </form>
+            <div class="result-container">
+                <div class="result"></div>
+            </div>
+            <div class="heartbeatloader">
+                <div class="spinner">
+                    <svg class="svgdraw" width="100" height="100" viewBox="0 0 150 400"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path class="path"
+                            d="M 0 200 l 40 0 l 5 -40 l 5 40 l 10 0 l 5 15 l 10 -140 l 10 220 l 5 -95 l 10 0 l 5 20 l 5 -20 l 30 0"
+                            fill="transparent" stroke-width="4" stroke="black"></path>
+                    </svg>
+                    <div class="innercircle"></div>
+                    <div class="outercircle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer bg-gray text-muted py-3">
+        <div class="container text-center">
+            &copy;
+            <script>
+                var currentDate = new Date();
+                document.write(currentDate.getFullYear());
+            </script> Santo Saji Chacko.
+        </div>
+    </footer>
+    <script>
+        document.getElementById("calculateButton").addEventListener("click", function () {
+            document.querySelector(".heartbeatloader").style.display = "block";
+            setTimeout(function () {
+                calculateResult();
+            }, 3000);
+        });
+
+        function calculateResult() {
+            var name1 = document.getElementById("name1").value.toLowerCase().replace(/\s/g, '');
+            var name2 = document.getElementById("name2").value.toLowerCase().replace(/\s/g, '');
+
+            var flames = ["Friends", "Love", "Affection", "Marriage", "Enemies", "Siblings"];
+
+            function removeDuplicates(name) {
+                return name.split('').filter(function (letter, index) {
+                    return name.indexOf(letter) === index;
+                }).join('');
+            }
+
+            name1 = removeDuplicates(name1);
+            name2 = removeDuplicates(name2);
+
+            var totalCount = name1.length + name2.length;
+
+            for (var i = 0; i < name1.length; i++) {
+                var index = name2.indexOf(name1[i]);
+                if (index !== -1) {
+                    name2 = name2.substring(0, index) + name2.substring(index + 1);
+                    totalCount -= 2;
+                }
+            }
+
+            var result = flames[(totalCount - 1) % 6];
+
+            document.querySelector(".result").innerHTML = "Relationship between " + document.getElementById("name1").value + " and " + document.getElementById("name2").value + " is " + result;
+            document.querySelector(".heartbeatloader").style.display = "none";
+        }
+    </script>
+</body>
+
+</html>
